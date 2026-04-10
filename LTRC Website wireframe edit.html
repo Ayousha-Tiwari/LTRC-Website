@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LTRC — Language Technologies Research Centre</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --red:    #8c1515;
+  --red-lt: #b83a3a;
+  --gold:   #b26f16;
+  --ink:    #1a1a1a;
+  --mid:    #4a4a4a;
+  --muted:  #767676;
+  --border: #d8d2c8;
+  --warm:   #f9f7f4;
+  --white:  #ffffff;
+  --teal:   #1d6b6b;
+  --blue:   #023047;
+}
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  font-family: 'Source Sans 3', sans-serif;
+  background: var(--white);
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+.serif { font-family: 'Source Serif 4', serif; }
+.tag {
+  display: inline-block;
+  font-size: 0.68rem; font-weight: 600; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--red);
+  border-bottom: 2px solid var(--red);
+  padding-bottom: 2px; margin-bottom: 1.1rem;
+}
+.tag.blue  { color: var(--teal); border-color: var(--teal); }
+.tag.gold  { color: var(--gold); border-color: var(--gold); }
+
+[contenteditable="true"] {
+  outline: 2px dashed transparent;
+  transition: outline 0.2s;
+}
+[contenteditable="true"]:hover { outline-color: rgba(140, 21, 21, 0.3); }
+[contenteditable="true"]:focus { outline-color: var(--red); }
+
+.edit-mode-toggle {
+  position: fixed; bottom: 2rem; right: 2rem;
+  background: var(--red); color: white;
+  border: none; padding: 0.75rem 1.5rem;
+  border-radius: 4px; font-size: 0.85rem;
+  font-weight: 600; cursor: pointer; z-index: 1000;
+  box-shadow: 0 4px 12px rgba(140, 21, 21, 0.3);
+}
+.edit-mode-toggle:hover { background: #6e1010; }
+
+/* ── HEADER ── */
+header {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 200;
+}
+.header-top {
+  background: var(--red);
+  padding: 0.35rem 3rem;
+  display: flex; align-items: center; gap: 1rem;
+}
+.header-top span {
+  font-size: 0.7rem; color: rgba(255,255,255,0.75);
+  letter-spacing: 0.06em;
+}
+.header-top a { 
+  color: rgba(255,255,255,0.9); 
+  font-size: 0.7rem; 
+  text-decoration: none; 
+}
+.header-top a:hover { text-decoration: underline; }
+.header-main {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 3rem; height: 68px;
+}
+.logo-block { display: flex; align-items: center; gap: 1rem; }
+.logo-wordmark {
+  font-family: 'Source Serif 4', serif;
+  font-size: 1.35rem; font-weight: 600;
+  color: var(--ink); line-height: 1;
+}
+.logo-wordmark small {
+  display: block; font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.65rem; font-weight: 400; color: var(--muted);
+  letter-spacing: 0.04em; margin-top: 2px;
+}
+.logo-divider { width: 1px; height: 36px; background: var(--border); }
+.logo-iiit { font-size: 0.72rem; color: var(--muted); line-height: 1.4; }
+
+nav.main-nav ul { list-style: none; display: flex; gap: 0.2rem; }
+nav.main-nav ul li a {
+  display: block; padding: 0.5rem 0.9rem;
+  font-size: 0.82rem; font-weight: 500;
+  color: var(--ink); text-decoration: none;
+  border-radius: 2px; transition: background 0.15s, color 0.15s;
+}
+nav.main-nav ul li a:hover { background: var(--warm); color: var(--red); }
+.nav-cta {
+  background: var(--red) !important; 
+  color: #fff !important;
+  padding: 0.5rem 1.1rem !important; 
+  border-radius: 2px;
+}
+.nav-cta:hover { background: #6e1010 !important; }
+
+/* ── HERO ── */
+.hero {
+  background: linear-gradient(135deg, var(--warm) 0%, var(--white) 100%);
+  padding: 6rem 4rem 4rem;
+  border-bottom: 1px solid var(--border);
+}
+.hero-content {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+.hero-kicker {
+  font-size: 0.72rem; font-weight: 600; 
+  letter-spacing: 0.16em; text-transform: uppercase; 
+  color: var(--red); margin-bottom: 1.4rem;
+}
+.hero-h1 {
+  font-family: 'Source Serif 4', serif;
+  font-size: clamp(2.4rem, 4vw, 3.8rem);
+  font-weight: 300; line-height: 1.12;
+  color: var(--ink); margin-bottom: 1.6rem;
+}
+.hero-h1 strong { font-weight: 600; }
+.hero-lead {
+  font-size: 1.1rem; color: var(--mid);
+  max-width: 700px; margin: 0 auto 2.5rem;
+  line-height: 1.75;
+}
+
+.vision-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+.vision-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 2rem;
+  border-radius: 4px;
+  text-align: left;
+  transition: all 0.3s;
+}
+.vision-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  border-color: var(--red);
+}
+.vision-number {
+  font-family: 'Source Serif 4', serif;
+  font-size: 2rem;
+  color: var(--red);
+  margin-bottom: 0.5rem;
+}
+.vision-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 0.5rem;
+}
+.vision-desc {
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ── SARASWATI SECTION ── */
+.saraswati-section {
+  background: var(--blue);
+  color: white;
+  padding: 5rem 4rem;
+  position: relative;
+  overflow: hidden;
+}
+.saraswati-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05));
+}
+.saraswati-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+.saraswati-tag {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border-bottom: 2px solid var(--gold);
+  padding-bottom: 2px;
+  margin-bottom: 1.5rem;
+}
+.saraswati-h2 {
+  font-family: 'Source Serif 4', serif;
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+}
+.saraswati-lead {
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.85);
+  max-width: 800px;
+  margin-bottom: 2rem;
+  line-height: 1.75;
+}
+.saraswati-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+.saraswati-feature {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  padding: 2rem;
+  border-radius: 4px;
+}
+.feature-icon {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1rem;
+}
+.feature-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+.feature-desc {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.6;
+}
+
+/* ── FOUNDATIONAL LABS ── */
+.labs-section {
+  padding: 5rem 4rem;
+  background: var(--white);
+}
+.section-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+.section-header h2 {
+  font-family: 'Source Serif 4', serif;
+  font-size: 2.5rem;
+  color: var(--ink);
+  margin-bottom: 1rem;
+}
+.section-lead {
+  font-size: 1.05rem;
+  color: var(--mid);
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+.labs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.lab-card {
+  background: var(--warm);
+  border: 1px solid var(--border);
+  padding: 2.5rem;
+  border-radius: 4px;
+  transition: all 0.3s;
+  position: relative;
+}
+.lab-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--red);
+}
+.lab-card:nth-child(2)::before { background: var(--teal); }
+.lab-card:nth-child(3)::before { background: var(--gold); }
+.lab-card:nth-child(4)::before { background: var(--blue); }
+
+.lab-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+.lab-tag {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 1.2rem;
+  display: inline-block;
+}
+.lab-name {
+  font-family: 'Source Serif 4', serif;
+  font-size: 1.5rem;
+  color: var(--ink);
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+.lab-desc {
+  font-size: 0.9rem;
+  color: var(--mid);
+  line-height: 1.65;
+  margin-bottom: 1.5rem;
+}
+.lab-link {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--red);
+  text-decoration: none;
+  border-bottom: 1px solid var(--red);
+  padding-bottom: 2px;
+  transition: color 0.2s;
+}
+.lab-link:hover { color: #6e1010; }
+
+/* ── EDUCATION SECTION ── */
+.education-section {
+  padding: 5rem 4rem;
+  background: var(--warm);
+  border-top: 1px solid var(--border);
+}
+.edu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 3rem auto 0;
+}
+.edu-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 2.5rem;
+  border-radius: 4px;
+  transition: all 0.3s;
+}
+.edu-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+.edu-icon {
+  width: 48px;
+  height: 48px;
+  background: var(--red);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+.edu-title {
+  font-family: 'Source Serif 4', serif;
+  font-size: 1.3rem;
+  color: var(--ink);
+  margin-bottom: 1rem;
+}
+.edu-desc {
+  font-size: 0.9rem;
+  color: var(--mid);
+  line-height: 1.65;
+  margin-bottom: 1.5rem;
+}
+.edu-list {
+  list-style: none;
+  margin-bottom: 1.5rem;
+}
+.edu-list li {
+  font-size: 0.85rem;
+  color: var(--muted);
+  padding: 0.4rem 0;
+  padding-left: 1.5rem;
+  position: relative;
+}
+.edu-list li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--red);
+}
+.edu-link {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--red);
+  text-decoration: none;
+  border-bottom: 1px solid var(--red);
+  padding-bottom: 2px;
+}
+
+/* ── RESEARCH SECTION ── */
+.research-section {
+  padding: 5rem 4rem;
+  background: var(--white);
+}
+.pub-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 900px;
+  margin: 3rem auto 0;
+}
+.pub-item {
+  padding: 1.75rem;
+  background: var(--warm);
+  border-left: 4px solid var(--red);
+  border-radius: 2px;
+  transition: all 0.3s;
+}
+.pub-item:hover {
+  background: var(--white);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+.pub-year {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--red);
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.08em;
+}
+.pub-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 0.4rem;
+  line-height: 1.4;
+}
+.pub-venue {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.view-more {
+  display: inline-block;
+  margin-top: 2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--red);
+  text-decoration: none;
+  border-bottom: 2px solid var(--red);
+  padding-bottom: 4px;
+}
+.view-more:hover {
+  color: #6e1010;
+}
+
+/* ── ECOSYSTEM SECTION ── */
+.ecosystem-section {
+  padding: 5rem 4rem;
+  background: var(--ink);
+  color: white;
+}
+.ecosystem-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: 1000px;
+  margin: 3rem auto 0;
+}
+.ecosystem-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 2rem;
+  border-radius: 4px;
+  text-align: center;
+  transition: all 0.3s;
+}
+.ecosystem-card:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: var(--red);
+  transform: translateY(-4px);
+}
+.ecosystem-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+.ecosystem-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.ecosystem-desc {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 1.5rem;
+}
+.ecosystem-link {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--red-lt);
+  text-decoration: none;
+  border-bottom: 1px solid var(--red-lt);
+  padding-bottom: 2px;
+}
+
+/* ── FOOTER ── */
+footer {
+  background: var(--ink);
+  color: rgba(255,255,255,0.7);
+  padding: 4rem 4rem 2rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 3rem;
+  margin-bottom: 3rem;
+  max-width: 1200px;
+}
+.footer-brand {
+  font-size: 0.9rem;
+  line-height: 1.8;
+}
+.footer-brand .logo-wordmark {
+  color: white;
+  margin-bottom: 1rem;
+}
+.footer-brand a {
+  color: var(--red-lt);
+  text-decoration: none;
+}
+.footer-col h5 {
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+.footer-col ul {
+  list-style: none;
+}
+.footer-col ul li {
+  margin-bottom: 0.5rem;
+}
+.footer-col ul li a {
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.2s;
+}
+.footer-col ul li a:hover {
+  color: white;
+}
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 2rem;
+  text-align: center;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.5);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .header-main {
+    flex-direction: column;
+    height: auto;
+    padding: 1rem;
+  }
+  nav.main-nav ul {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .vision-cards,
+  .saraswati-features,
+  .labs-grid,
+  .edu-grid,
+  .ecosystem-grid {
+    grid-template-columns: 1fr;
+  }
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+<body>
+
+<button class="edit-mode-toggle" onclick="toggleEditMode()">
+  <span id="edit-mode-text">Enable Edit Mode</span>
+</button>
+
+<!-- HEADER -->
+<header>
+  <div class="header-top">
+    <span>Kohli Centre on Intelligent Systems (KCIS)</span>
+    <a href="https://www.iiit.ac.in/" target="_blank">IIIT Hyderabad</a>
+  </div>
+  <div class="header-main">
+    <div class="logo-block">
+      <div class="logo-wordmark" contenteditable="true">
+        LTRC
+        <small>Language Technologies Research Centre</small>
+      </div>
+      <div class="logo-divider"></div>
+      <div class="logo-iiit" contenteditable="true">
+        International Institute of<br/>Information Technology
+      </div>
+    </div>
+    <nav class="main-nav">
+      <ul>
+        <li><a href="#vision">Vision</a></li>
+        <li><a href="#labs">Labs</a></li>
+        <li><a href="#education">Education</a></li>
+        <li><a href="#research">Research</a></li>
+        <li><a href="#ecosystem">Ecosystem</a></li>
+        <li><a href="#contact" class="nav-cta">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="vision">
+  <div class="hero-content">
+    <div class="hero-kicker" contenteditable="true">Est. 1998 · Global Leader in Indic AI</div>
+    <h1 class="hero-h1" contenteditable="true">
+      The world's definitive authority on <strong>AI for Indian languages</strong>
+    </h1>
+    <p class="hero-lead" contenteditable="true">
+      LTRC pioneers cognitive-computational linguistics, sets global standards for Indic AI performance, and delivers inclusive language technologies that serve linguistically diverse communities.
+    </p>
+
+    <div class="vision-cards">
+      <div class="vision-card">
+        <div class="vision-number">01</div>
+        <div class="vision-title" contenteditable="true">Global Standards</div>
+        <div class="vision-desc" contenteditable="true">Setting benchmarks and ethical frameworks for AI performance in Indian and low-resource languages worldwide.</div>
+      </div>
+      <div class="vision-card">
+        <div class="vision-number">02</div>
+        <div class="vision-title" contenteditable="true">Cognitive-Computational Linguistics</div>
+        <div class="vision-desc" contenteditable="true">Advancing resource-efficient, interpretable AI by integrating linguistics and cognitive science with modern deep learning.</div>
+      </div>
+      <div class="vision-card">
+        <div class="vision-number">03</div>
+        <div class="vision-title" contenteditable="true">Societal Impact</div>
+        <div class="vision-desc" contenteditable="true">Delivering high-quality education and technology across all Indian languages to support national policy goals.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECT SARASWATI -->
+<section class="saraswati-section" id="saraswati">
+  <div class="saraswati-content">
+    <div class="saraswati-tag">FLAGSHIP INITIATIVE</div>
+    <h2 class="saraswati-h2" contenteditable="true">Project Saraswati</h2>
+    <p class="saraswati-lead" contenteditable="true">
+      A national open-source multimodal AI ecosystem delivering high-quality higher education content across all Indian languages. Built to directly support the National Education Policy (NEP) 2020 and ensure digital equity at scale.
+    </p>
+
+    <div class="saraswati-features">
+      <div class="saraswati-feature">
+        <div class="feature-icon">MULTIMODAL AI</div>
+        <div class="feature-title" contenteditable="true">Beyond Translation</div>
+        <div class="feature-desc" contenteditable="true">Integrating text, speech, and visual modalities for improved accessibility and personalized learning across diverse learner profiles.</div>
+      </div>
+
+      <div class="saraswati-feature">
+        <div class="feature-icon">OPEN ECOSYSTEM</div>
+        <div class="feature-title" contenteditable="true">Community-Driven Platform</div>
+        <div class="feature-desc" contenteditable="true">Co-created with academia, industry, and government. All datasets, models, and tools released as open-source resources.</div>
+      </div>
+
+      <div class="saraswati-feature">
+        <div class="feature-icon">NEP 2020 ALIGNMENT</div>
+        <div class="feature-title" contenteditable="true">Policy Impact</div>
+        <div class="feature-desc" contenteditable="true">Addressing critical national need for inclusive education in Indian languages. Partnering with universities and agencies for wide-scale deployment.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOUNDATIONAL LABS -->
+<section class="labs-section" id="labs">
+  <div class="section-header">
+    <div class="tag">Foundational Strengths</div>
+    <h2 contenteditable="true">Our Research Labs</h2>
+    <p class="section-lead" contenteditable="true">
+      Four decades of dual-competence expertise in classical linguistics and computational power. Deep understanding of Indian language structure combined with cutting-edge AI research.
+    </p>
+  </div>
+
+  <div class="labs-grid">
+    <div class="lab-card">
+      <div class="lab-tag" contenteditable="true">NLP · Machine Translation</div>
+      <h3 class="lab-name" contenteditable="true">MT-NLP Lab</h3>
+      <p class="lab-desc" contenteditable="true">
+        Syntax and parsing, semantics and word sense disambiguation, discourse and tree banking, machine translation, creation of linguistic resources. Computational models inspired by linguistics combined with modern machine learning.
+      </p>
+      <a href="nlpmt/" class="lab-link">Explore Lab →</a>
+    </div>
+
+    <div class="lab-card">
+      <div class="lab-tag" contenteditable="true">Classical · Sanskrit</div>
+      <h3 class="lab-name" contenteditable="true">Anusaaraka Lab</h3>
+      <p class="lab-desc" contenteditable="true">
+        Fusion of traditional Indian shastras and advanced modern technologies. Joint initiative with Chinmaya International Foundation and University of Hyderabad for Sanskrit-based machine translation and computational grammar.
+      </p>
+      <a href="https://ltrc.iiit.ac.in/Anusaaraka/anu_home.html" class="lab-link">Explore Lab →</a>
+    </div>
+
+    <div class="lab-card">
+      <div class="lab-tag" contenteditable="true">Speech · Audio · Vision</div>
+      <h3 class="lab-name" contenteditable="true">Speech Processing Lab</h3>
+      <p class="lab-desc" contenteditable="true">
+        Goal-oriented basic research in robust speech-to-text systems, natural text-to-speech systems, spoken and audio information retrieval, and biometrics using speech and video. Core speech architectures for Indic languages.
+      </p>
+      <a href="http://speech.iiit.ac.in/" class="lab-link">Explore Lab →</a>
+    </div>
+
+    <div class="lab-card">
+      <div class="lab-tag" contenteditable="true">IR · IE · IA</div>
+      <h3 class="lab-name" contenteditable="true">IREL — Information Retrieval & Extraction</h3>
+      <p class="lab-desc" contenteditable="true">
+        Fundamental research in Information Retrieval, Extraction, and Access. Search, retrieval, and extraction for complex information needs in multilingual settings. Core IR architectures and frameworks.
+      </p>
+      <a href="https://irel.iiit.ac.in/" class="lab-link">Explore Lab →</a>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section class="education-section" id="education">
+  <div class="section-header">
+    <div class="tag blue">Teaching & Training</div>
+    <h2 contenteditable="true">Education Programs</h2>
+    <p class="section-lead" contenteditable="true">
+      Beyond research, we cultivate the next generation of language technology experts. Our academic offerings range from foundational theory to hands-on professional application.
+    </p>
+  </div>
+
+  <div class="edu-grid">
+    <div class="edu-card">
+      <div class="edu-icon">📚</div>
+      <h3 class="edu-title" contenteditable="true">Regular Courses</h3>
+      <p class="edu-desc" contenteditable="true">
+        Core LTRC curriculum across all IIIT programme levels. Hands-on NLP application, computational linguistics, and language technology foundations.
+      </p>
+      <ul class="edu-list">
+        <li contenteditable="true">Foundations of Natural Language Processing</li>
+        <li contenteditable="true">Statistical & Neural Machine Translation</li>
+        <li contenteditable="true">Speech Technology</li>
+        <li contenteditable="true">Information Retrieval & Extraction</li>
+        <li contenteditable="true">Computational Linguistics (CL1, CL2)</li>
+      </ul>
+      <a href="courses.php" class="edu-link">View Full Course Table →</a>
+    </div>
+
+    <div class="edu-card">
+      <div class="edu-icon">☀️</div>
+      <h3 class="edu-title" contenteditable="true">Summer & Winter Schools</h3>
+      <p class="edu-desc" contenteditable="true">
+        Seasonal intensive schools on emerging NLP and AI trends. The annual IASNLP school draws participants globally.
+      </p>
+      <ul class="edu-list">
+        <li contenteditable="true">IASNLP Summer School (Annual)</li>
+        <li contenteditable="true">Intensive upskilling programmes</li>
+        <li contenteditable="true">Workshop series on emerging topics</li>
+        <li contenteditable="true">Hands-on training with latest tools</li>
+      </ul>
+      <a href="https://ltrc.iiit.ac.in/iasnlp2024/" class="edu-link">IASNLP Details →</a>
+    </div>
+
+    <div class="edu-card">
+      <div class="edu-icon">🏆</div>
+      <h3 class="edu-title" contenteditable="true">Professional Programmes</h3>
+      <p class="edu-desc" contenteditable="true">
+        Industry certifications and professional development tailored for building specific competency in Indic language technology.
+      </p>
+      <ul class="edu-list">
+        <li contenteditable="true">Online Master's in Computational Linguistics</li>
+        <li contenteditable="true">Professional certifications</li>
+        <li contenteditable="true">Diploma and Minor programmes</li>
+        <li contenteditable="true">Industry-focused skill development</li>
+      </ul>
+      <a href="courses.php" class="edu-link">Programme Details →</a>
+    </div>
+  </div>
+</section>
+
+<!-- RESEARCH -->
+<section class="research-section" id="research">
+  <div class="section-header">
+    <div class="tag">Academic Dissemination</div>
+    <h2 contenteditable="true">Research & Publications</h2>
+    <p class="section-lead" contenteditable="true">
+      Our commitment to robust scientific inquiry leads to regular high-impact publications. Explore our contributions to the fields of linguistics, information retrieval, and speech technology.
+    </p>
+  </div>
+
+  <div class="pub-list">
+    <div class="pub-item">
+      <div class="pub-year" contenteditable="true">2024</div>
+      <div class="pub-title" contenteditable="true">Cross-lingual Transfer for Extremely Low-Resource Dravidian NLP</div>
+      <div class="pub-venue" contenteditable="true">ACL 2024 · Findings</div>
+    </div>
+
+    <div class="pub-item">
+      <div class="pub-year" contenteditable="true">2024</div>
+      <div class="pub-title" contenteditable="true">IndicBench: A Comprehensive Evaluation Suite for Indian Language Models</div>
+      <div class="pub-venue" contenteditable="true">EMNLP 2024</div>
+    </div>
+
+    <div class="pub-item">
+      <div class="pub-year" contenteditable="true">2024</div>
+      <div class="pub-title" contenteditable="true">End-to-End Neural TTS for 12 Indian Languages</div>
+      <div class="pub-venue" contenteditable="true">Interspeech 2024</div>
+    </div>
+
+    <div class="pub-item">
+      <div class="pub-year" contenteditable="true">2023</div>
+      <div class="pub-title" contenteditable="true">Anaphora Resolution in Classical Sanskrit Using Graph Neural Networks</div>
+      <div class="pub-venue" contenteditable="true">COLING 2023</div>
+    </div>
+
+    <div class="pub-item">
+      <div class="pub-year" contenteditable="true">2023</div>
+      <div class="pub-title" contenteditable="true">Cognitive Approaches to Word Sense Disambiguation in Low-Resource Languages</div>
+      <div class="pub-venue" contenteditable="true">Computational Linguistics Journal</div>
+    </div>
+  </div>
+
+  <div style="text-align: center;">
+    <a href="https://www.iiit.ac.in/research/publications/?filter=ltrc" class="view-more" target="_blank">
+      Browse All LTRC Publications at IIIT →
+    </a>
+  </div>
+</section>
+
+<!-- ECOSYSTEM -->
+<section class="ecosystem-section" id="ecosystem">
+  <div class="section-header">
+    <div class="tag gold" style="color: var(--gold); border-color: var(--gold);">Open Source</div>
+    <h2 contenteditable="true" style="color: white;">Ecosystem & Community</h2>
+    <p class="section-lead" contenteditable="true" style="color: rgba(255,255,255,0.8);">
+      Access our models, datasets, and foundational codebases. We share openly to enable broader community contribution and adoption.
+    </p>
+  </div>
+
+  <div class="ecosystem-grid">
+    <div class="ecosystem-card">
+      <div class="ecosystem-icon">🐙</div>
+      <div class="ecosystem-name" contenteditable="true">GitHub</div>
+      <div class="ecosystem-desc" contenteditable="true">Open-source codebases, tools, and research implementations</div>
+      <a href="https://github.com/ltrc" class="ecosystem-link" target="_blank">Explore Repositories →</a>
+    </div>
+
+    <div class="ecosystem-card">
+      <div class="ecosystem-icon">🤗</div>
+      <div class="ecosystem-name" contenteditable="true">Hugging Face</div>
+      <div class="ecosystem-desc" contenteditable="true">Pre-trained models, datasets, and evaluation benchmarks</div>
+      <a href="https://huggingface.co/ltrc" class="ecosystem-link" target="_blank">Browse Models →</a>
+    </div>
+
+    <div class="ecosystem-card">
+      <div class="ecosystem-icon">📊</div>
+      <div class="ecosystem-name" contenteditable="true">Datasets & Resources</div>
+      <div class="ecosystem-desc" contenteditable="true">Linguistic corpora, annotated datasets, and evaluation suites</div>
+      <a href="#" class="ecosystem-link">Access Resources →</a>
+    </div>
+
+    <div class="ecosystem-card">
+      <div class="ecosystem-icon">💬</div>
+      <div class="ecosystem-name" contenteditable="true">Social & Community</div>
+      <div class="ecosystem-desc" contenteditable="true">Connect with us on LinkedIn, Twitter, and research forums</div>
+      <a href="https://www.linkedin.com/company/ltrc-iiit" class="ecosystem-link" target="_blank">Follow Us →</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="contact">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo-wordmark">
+        LTRC
+        <small>Language Technologies Research Centre</small>
+      </div>
+      <p contenteditable="true">
+        1st Floor, Kohli Center on Intelligent Systems (KCIS)<br/>
+        IIIT Hyderabad, Gachibowli<br/>
+        Hyderabad, Telangana — 500 032<br/><br/>
+        <a href="mailto:ltrc.office1@iiit.ac.in">ltrc.office1@iiit.ac.in</a><br/>
+        +91-40-6653 1581
+      </p>
+    </div>
+    <div class="footer-col">
+      <h5>Research</h5>
+      <ul>
+        <li><a href="#research">Publications</a></li>
+        <li><a href="#labs">Labs</a></li>
+        <li><a href="#saraswati">Project Saraswati</a></li>
+        <li><a href="https://www.iiit.ac.in/research/publications/?filter=ltrc" target="_blank">IIIT Publications</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>People</h5>
+      <ul>
+        <li><a href="faculty.php">Faculty</a></li>
+        <li><a href="staff.php">Staff</a></li>
+        <li><a href="PhD_students.php">PhD Students</a></li>
+        <li><a href="MS_students.php">MS Students</a></li>
+        <li><a href="alumini.php">Alumni</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Connect</h5>
+      <ul>
+        <li><a href="#education">Education</a></li>
+        <li><a href="courses.php">Courses</a></li>
+        <li><a href="https://ltrc.iiit.ac.in/iasnlp2024/">IASNLP School</a></li>
+        <li><a href="#ecosystem">GitHub & Datasets</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p contenteditable="true">© 2025 Language Technologies Research Centre, IIIT Hyderabad. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+let editMode = false;
+
+function toggleEditMode() {
+  editMode = !editMode;
+  const editableElements = document.querySelectorAll('[contenteditable]');
+  const btn = document.getElementById('edit-mode-text');
+  
+  editableElements.forEach(el => {
+    el.contentEditable = editMode ? 'true' : 'false';
+  });
+  
+  btn.textContent = editMode ? 'Disable Edit Mode' : 'Enable Edit Mode';
+  
+  if (editMode) {
+    alert('Edit mode enabled! Click on any text to edit. Changes are session-only — to save permanently, copy the HTML source.');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const editableElements = document.querySelectorAll('[contenteditable]');
+  editableElements.forEach(el => {
+    el.contentEditable = 'false';
+  });
+});
+</script>
+
+</body>
+</html>
